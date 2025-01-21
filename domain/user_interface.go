@@ -10,7 +10,7 @@ import (
 
 type JwtCustomClaims struct {
 	UserID    primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Full_Name string             `json:"Full_Name"`
+	Full_Name string             `json:"full_name"`
 	Email     string             `json:"email"`
 	Username  string             `json:"username"`
 	Role      string             `json:"role"`

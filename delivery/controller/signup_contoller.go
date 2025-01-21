@@ -119,6 +119,8 @@ func (uc *SignupController) GetSubordinateUsers(c *gin.Context) {
 func (uc *SignupController) GetUnverifiedUsersByToWhom(c *gin.Context) {
 	claims := c.MustGet("claim").(*domain.JwtCustomClaims)
 	firstName := claims.Full_Name
+	fmt.Printf("First name: %s\n", claims)
+
 	if firstName == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized or missing first name"})
 		return
