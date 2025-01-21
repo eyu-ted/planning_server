@@ -40,7 +40,9 @@ type Plan struct {
 	EndDate          time.Time           `bson:"end_date" json:"end_date"`               // ID of the user who created the plan
 	Type             string              `bson:"type" json:"type"`
 
-	Comment string `bson:"comment" json:"comment"` // ID of the user who created the plan
+	Comment string  `bson:"comment" json:"comment"`
+	Value   float64 `bson:"value" json:"value"`
+	// ID of the user who created the plan
 }
 
 type Report struct {
@@ -49,11 +51,12 @@ type Report struct {
 	ReportTitle       string             `bson:"report_title" json:"report_title"`     // Title of the plan
 	AccomplishedValue string             `bson:"acomplished_value" json:"acomplished"` // Description of the plan
 	ReportDetails     string             `bson:"report_details" json:"report_details"` // Priority of the plan (e.g., High, Medium, Low)
-	ReportStatus      string             `bson:"report_status" json:"report_status"`   // Owner of the plan (name of the person responsible)
+	Status            string             `bson:"status" json:"status"`                 // Owner of the plan (name of the person responsible)
 	Type              string             `bson:"type" json:"type"`                     // Owner of the plan (name of the person responsible)
 
-	SupervisorName string `bson:"supervisor_name" json:"supervisor_name"` // Supervisor's name (1 level higher in hierarchy)
-	Comment        string `bson:"comment" json:"comment"`                 // ID of the user who created the plan
+	SupervisorName  string `bson:"supervisor_name" json:"supervisor_name"` // Supervisor's name (1 level higher in hierarchy)
+	Comment         string `bson:"comment" json:"comment"`                 // ID of the user who created the plan
+// Supervisor's name (1 level higher in hierarchy)
 }
 
 // Comment represents a comment on a plan.
@@ -65,7 +68,6 @@ type Comment struct {
 	CreatedAt time.Time          `bson:"created_at" json:"created_at"`    // Time when the comment was created
 }
 
-
 type Announcement struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	Title       string             `bson:"title" json:"title" binding:"required"`
@@ -73,6 +75,7 @@ type Announcement struct {
 	CreatedTime time.Time          `bson:"created_time" json:"created_time"`
 	Type        string             `bson:"type" json:"type"`
 }
+
 // PlanResponse represents the response returned when fetching a plan.
 
 var (

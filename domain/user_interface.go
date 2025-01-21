@@ -9,24 +9,15 @@ import (
 )
 
 type JwtCustomClaims struct {
-	UserID     primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	First_Name string             `json:"first_name"`
-	Email      string             `json:"email"`
-	Username   string             `json:"username"`
-	Role       string             `json:"role"`
-	To_whom    string             `json:"to_whom"`
-	Status     bool               `json:"status"`
+	UserID    primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Full_Name string             `json:"Full_Name"`
+	Email     string             `json:"email"`
+	Username  string             `json:"username"`
+	Role      string             `json:"role"`
+	To_whom   string             `json:"to_whom"`
+	Status    bool               `json:"status"`
 	jwt.StandardClaims
 }
-
-// type CreateUser struct {
-// 	Username string `json:"username" binding:"required"`
-// 	Email    string `json:"email" binding:"required"`
-// 	Password string `json:"password" binding:"required"`
-// 	Role     string `json:"role" binding:"required"`
-// }
-
-// Role is a type for user roles
 
 type AuthSignup struct {
 	UserID          primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
@@ -95,6 +86,7 @@ type PlanRepository interface {
 	GetAllPlansByUser(ctx context.Context, userID primitive.ObjectID) ([]Plan, error)
 	CreateAnnouncement(ctx context.Context, announcement *Announcement) error
 	GetAllAnnouncements(ctx context.Context) ([]Announcement, error)
+	Delete(ctx context.Context, id primitive.ObjectID) error
 }
 type PlanUsecase interface {
 	CreatePlan(c context.Context, plan *Plan) (*primitive.ObjectID, error)
@@ -120,4 +112,5 @@ type PlanUsecase interface {
 	GetAllPlansByUser(ctx context.Context, userID primitive.ObjectID) ([]Plan, error)
 	PublishAnnouncement(ctx context.Context, announcement *Announcement) error
 	GetAllAnnouncements(ctx context.Context) ([]Announcement, error)
+	DeleteAnnouncement(ctx context.Context, id primitive.ObjectID) error
 }

@@ -10,8 +10,9 @@ import (
 
 	"errors"
 
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	// "time"
 )
 
 type userRepository struct {
@@ -27,8 +28,10 @@ func NewUserRepository(db database.Database, collection string) domain.UserRepos
 }
 
 func (u *userRepository) CreateUser(c context.Context, user *domain.User) error {
+	user.Created_At = primitive.NewDateTimeFromTime(time.Now())
 	collection := u.database.Collection(u.collection)
 	_, err := collection.InsertOne(c, user)
+	fmt.Println(user)
 	return err
 }
 func (ur *userRepository) FindUnverifiedUsersByToWhom(ctx context.Context, firstName string) ([]domain.User, error) {
@@ -152,7 +155,10 @@ func (ur *userRepository) GetUserByUsername(ctx context.Context, username string
 func (u *userRepository) FindUsersByRole(c context.Context, role string) ([]domain.User, error) {
 	collection := u.database.Collection(u.collection)
 
-	filter := bson.M{"role": role}
+	filter := bson.M{
+		"role":   role,
+		"verify": true,
+	}
 	cursor, err := collection.Find(c, filter)
 	if err != nil {
 		return nil, err

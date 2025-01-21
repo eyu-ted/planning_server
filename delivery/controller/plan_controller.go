@@ -18,6 +18,34 @@ type PlanController struct {
 	Env         *config.Env
 }
 
+func (ac *PlanController) DeleteAnnouncement(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID is required"})
+		return
+	}
+
+	// Convert ID to ObjectID
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format"})
+		return
+	}
+
+	// Call the usecase
+	err = ac.PlanUsecase.DeleteAnnouncement(c, objectID)
+	if err != nil {
+		if err.Error() == "announcement not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Announcement not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Announcement deleted successfully"})
+}
+
 func (rc *PlanController) GetAllAnnouncements(c *gin.Context) {
 	announcements, err := rc.PlanUsecase.GetAllAnnouncements(c)
 	if err != nil {
@@ -67,7 +95,7 @@ func (rc *PlanController) UpdateReport(c *gin.Context) {
 	}
 
 	// Ensure the status is always set to "Pending"
-	updatedReport.ReportStatus = "Pending"
+	updatedReport.Status = "Pending"
 
 	// Call the usecase to update the report
 	err := rc.PlanUsecase.UpdateReport(c, reportID, &updatedReport)
@@ -131,7 +159,7 @@ func (rc *PlanController) UpdateReportStatus(c *gin.Context) {
 		return
 	}
 
-	supervisorName := user.First_Name // Extract supervisor's name from token
+	supervisorName := user.Full_Name // Extract supervisor's name from token
 
 	reportID, err := primitive.ObjectIDFromHex(request.ReportID)
 	if err != nil {
@@ -172,7 +200,7 @@ func (pc *PlanController) UpdatePlanStatus(c *gin.Context) {
 		return
 	}
 
-	supervisorName := user.First_Name // Extract supervisor's name from token
+	supervisorName := user.Full_Name // Extract supervisor's name from token
 
 	planID, err := primitive.ObjectIDFromHex(request.PlanID)
 	if err != nil {
@@ -209,7 +237,7 @@ func (rc *PlanController) GetReportsByStatus(c *gin.Context) {
 		return
 	}
 
-	supervisorName := user.First_Name // Extract supervisor name from the token
+	supervisorName := user.Full_Name // Extract supervisor name from the token
 
 	// Call usecase with both report_status and supervisor name
 	reports, err := rc.PlanUsecase.FetchReportsBySupervisorAndStatus(c, supervisorName, reportStatus)
@@ -235,7 +263,7 @@ func (pc *PlanController) GetPlansByStatus(c *gin.Context) {
 		return
 	}
 
-	supervisorName := user.First_Name // Supervisor name from the token
+	supervisorName := user.Full_Name // Supervisor name from the token
 
 	// Call usecase with both status and supervisor name
 	plans, err := pc.PlanUsecase.FetchPlansBySupervisorAndStatus(c, supervisorName, status)
@@ -265,7 +293,7 @@ func (pc *PlanController) CreatePlan(c *gin.Context) {
 	// Fill the plan information based on the user role and the JWT token
 	plan.OwnerRole = user.Role
 	plan.OwnerID = user.UserID
-	plan.OwnerName = user.First_Name
+	plan.OwnerName = user.Full_Name
 	plan.SupervisorName = user.To_whom
 	plan.CreatedBy = user.Username
 	// plan.SupervisorPlanID = &user.UserID // Assuming To_whom is the supervisor's ID
@@ -408,8 +436,8 @@ func (c *PlanController) CountItems(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid token claims"})
 		return
 	}
-	toWhom := claims.First_Name // Assuming `FirstName` is part of the claims
-
+	toWhom := claims.Full_Name // Assuming `FirstName` is part of the claims
+	
 	// Call the use case
 	count, err := c.PlanUsecase.CountItems(ctx.Request.Context(), itemType, toWhom)
 	if err != nil {

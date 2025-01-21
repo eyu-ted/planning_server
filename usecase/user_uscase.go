@@ -48,11 +48,11 @@ func (su *signupUsecase) RegisterUser(c context.Context, user *domain.AuthSignup
 	adduser := &domain.User{
 		ID:        primitive.NewObjectID(),
 		Full_Name: user.Full_Name,
-		Email:    user.Email,
-		Password: hashedPassword,
-		Role:     user.Role,
-		To_whom:  user.To_whom,
-		Verify:   false,
+		Email:     user.Email,
+		Password:  hashedPassword,
+		Role:      user.Role,
+		To_whom:   user.To_whom,
+		Verify:    false,
 	}
 	err = su.userRepository.CreateUser(ctx, adduser)
 	return &adduser.ID, err
@@ -147,12 +147,12 @@ func (uc *signupUsecase) RejectUser(c context.Context, userID string) error {
 
 func GenerateJWTToken(user *domain.User) (string, error) {
 	claims := &domain.JwtCustomClaims{
-		First_Name: user.Full_Name,
-		UserID:     user.ID,
-		Email:      user.Email,
-		Role:       user.Role,
-		To_whom:    user.To_whom,
-		Status:     user.Verify,
+		Full_Name: user.Full_Name,
+		UserID:    user.ID,
+		Email:     user.Email,
+		Role:      user.Role,
+		To_whom:   user.To_whom,
+		Status:    user.Verify,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * time.Duration(72)).Unix(),
 		},
@@ -168,10 +168,10 @@ func (su *signupUsecase) GetSuperiors(c context.Context, role string) ([]domain.
 
 	// Define the hierarchy map
 	roleHierarchy := map[string]string{
-		"vice_president":   "strategy_and_planning_manager",
-		"regular_employee": "team_lead",
-		"team_lead":        "director",
-		"director":         "vice_president",
+		"vice_president": "planning_office",
+		"Staff":          "team_lead",
+		"team_lead":      "director",
+		"director":       "vice_president",
 	}
 
 	superiorRole, exists := roleHierarchy[role]
@@ -202,8 +202,10 @@ func (uc *signupUsecase) VerifyUser(c context.Context, userID string) error {
 	}
 
 	// Send approval email
+	fmt.Printf("Sending approval email to %s\n", user.Full_Name)
+
 	if err := SendApprovalEmail(user.Email, user.Full_Name); err != nil {
-		return errors.New("failed to send approval email")
+		return err
 	}
 
 	return nil
@@ -241,6 +243,7 @@ func SendApprovalEmail(to string, firstName string) error {
 
 	// Create email dialer
 	dialer := gomail.NewDialer(smtpHost, smtpPort, smtpUsername, smtpPassword)
+	// dialer.Timeout = 10 * time.Second // Increase timeout to 10 seconds
 
 	// Send the email
 	return dialer.DialAndSend(mailer)

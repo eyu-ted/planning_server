@@ -27,6 +27,21 @@ func NewPlanRepository(db database.Database, collection string) domain.PlanRepos
 		collection: collection,
 	}
 }
+func (repo *planRepository) Delete(ctx context.Context, id primitive.ObjectID) error {
+	collection := repo.database.Collection(repo.collection)
+
+	// Delete the document with the given ID
+	result, err := collection.DeleteOne(ctx, bson.M{"_id": id})
+	if err != nil {
+		return err
+	}
+
+	if result == 0 {
+		return errors.New("announcement not found")
+	}
+
+	return nil
+}
 func (rr *planRepository) GetAllAnnouncements(ctx context.Context) ([]domain.Announcement, error) {
 	collection := rr.database.Collection(rr.collection)
 
@@ -64,7 +79,7 @@ func (rr *planRepository) UpdateReport(ctx context.Context, reportID primitive.O
 			"report_details":    updatedReport.ReportDetails,
 			"type":              updatedReport.Type,
 			"supervisor_name":   updatedReport.SupervisorName,
-			"report_status":     updatedReport.ReportStatus, // Always "Pending"
+			"report_status":     updatedReport.Status, // Always "Pending"
 			"updated_at":        time.Now(),
 			"comment":           "",
 		},
@@ -218,6 +233,8 @@ func (pr *planRepository) GetPlansBySupervisorAndStatus(ctx context.Context, sup
 }
 
 func (pr *planRepository) CreatePlan(c context.Context, plan *domain.Plan) error {
+	fmt.Printf("plan: %v\n", plan)
+	plan.Type = "plan"
 	collection := pr.database.Collection(pr.collection)
 	plan.ID = primitive.NewObjectID() // Create a new ID for the plan
 	_, err := collection.InsertOne(c, plan)
@@ -274,6 +291,7 @@ func (pr *planRepository) GetPlansByStatusAndOwner(ctx context.Context, userID p
 	return plans, nil
 }
 func (rr *planRepository) SubmitReport(ctx context.Context, report *domain.Report) error {
+	report.Status = "Pending"
 	collection := rr.database.Collection(rr.collection)
 	report.ID = primitive.NewObjectID()
 
@@ -330,8 +348,9 @@ func (r *planRepository) CountItems(ctx context.Context, itemType string, toWhom
 	filter := bson.M{
 		"type":            itemType,
 		"supervisor_name": toWhom,
-		"report_status":   "pending",
+		"status":          "Pending",
 	}
+
 
 	// Count the documents that match the filter
 	count, err := collection.CountDocuments(ctx, filter)

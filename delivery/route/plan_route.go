@@ -42,6 +42,7 @@ func NewPlanRouter(env *config.Env, timeout time.Duration, db database.Database,
 
 	group.POST("/announcements", sc.PublishAnnouncement)
 	group.GET("/announcements", sc.GetAllAnnouncements)
+	group.DELETE("/announcements/:id",sc.DeleteAnnouncement)
 
 	// group.GET("/plan", sc.GetPlan)
 	// group.PUT("/plan", sc.EditPlan)

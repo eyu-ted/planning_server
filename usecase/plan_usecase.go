@@ -28,6 +28,21 @@ func NewPlanUsecase(planRepositoryPAR domain.PlanRepository, timeout time.Durati
 		contextTimeout: timeout,
 	}
 }
+func (uc *planUsecaseStruct) DeleteAnnouncement(ctx context.Context, id primitive.ObjectID) error {
+	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
+	defer cancel()
+
+	// Call the repository to delete
+	err := uc.planRepository.Delete(ctx, id)
+	if err != nil {
+		if err.Error() == "announcement not found" {
+			return errors.New("announcement not found")
+		}
+		return err
+	}
+
+	return nil
+}
 func (ru *planUsecaseStruct) GetAllAnnouncements(ctx context.Context) ([]domain.Announcement, error) {
 	ctx, cancel := context.WithTimeout(ctx, ru.contextTimeout)
 	defer cancel()
