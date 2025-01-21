@@ -1,0 +1,38 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+
+# Output of the `go build` and `go test` commands
+/build/
+*.out
+
+# Dependency directories (auto-generated)
+vendor/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# Log files
+*.log
+
+# Configuration files
+.env
+.env.*
+
+# Coverage files
+*.cover
+*.cov
+
+# Test binary files
+*.test
+
+# Temporary files created by Go
+*.tmp
+*.temp
