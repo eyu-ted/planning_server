@@ -370,6 +370,8 @@ func (rc *PlanController) SubmitReport(c *gin.Context) {
 	report.ReportUserID = user.UserID
 	report.Type = "report"
 
+
+
 	// Call the usecase to submit the report
 	err := rc.PlanUsecase.SubmitReport(c, &report)
 	if err != nil {

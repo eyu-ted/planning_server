@@ -59,6 +59,7 @@ type Report struct {
 	         // ID of the user who created the plan
 // Supervisor's name (1 level higher in hierarchy)
 	Value float64 `bson:"value" json:"value"`
+	PlanID 		 primitive.ObjectID `bson:"plan_id" json:"plan_id"`
 }
 
 // Comment represents a comment on a plan.
