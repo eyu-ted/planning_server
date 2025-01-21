@@ -13,7 +13,9 @@ type SignupController struct {
 	SignupUsecase domain.SignupUsecase
 	Env           *config.Env
 }
+// func (sc *SignupController) TokenInfo(c *gin.Contex){
 
+// }
 func (sc *SignupController) Signup(c *gin.Context) {
 	var user domain.AuthSignup
 

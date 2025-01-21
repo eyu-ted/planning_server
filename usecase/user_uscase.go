@@ -46,15 +46,13 @@ func (su *signupUsecase) RegisterUser(c context.Context, user *domain.AuthSignup
 	}
 
 	adduser := &domain.User{
-		ID:         primitive.NewObjectID(),
-		First_Name: user.First_Name,
-		Last_Name:  user.Last_Name,
-		Username:   user.Username,
-		Email:      user.Email,
-		Password:   hashedPassword,
-		Role:       user.Role,
-		To_whom:    user.To_whom,
-		Verify:     false,
+		ID:        primitive.NewObjectID(),
+		Full_Name: user.Full_Name,
+		Email:    user.Email,
+		Password: hashedPassword,
+		Role:     user.Role,
+		To_whom:  user.To_whom,
+		Verify:   false,
 	}
 	err = su.userRepository.CreateUser(ctx, adduser)
 	return &adduser.ID, err
@@ -140,7 +138,7 @@ func (uc *signupUsecase) RejectUser(c context.Context, userID string) error {
 	}
 
 	// Optional: Send rejection email or log the action
-	if err := SendRejectionEmail(user.Email, user.First_Name); err != nil {
+	if err := SendRejectionEmail(user.Email, user.Full_Name); err != nil {
 		return errors.New("failed to send rejection email")
 	}
 
@@ -149,12 +147,12 @@ func (uc *signupUsecase) RejectUser(c context.Context, userID string) error {
 
 func GenerateJWTToken(user *domain.User) (string, error) {
 	claims := &domain.JwtCustomClaims{
-		First_Name: user.First_Name,
+		First_Name: user.Full_Name,
 		UserID:     user.ID,
 		Email:      user.Email,
-		Username:   user.Username,
 		Role:       user.Role,
 		To_whom:    user.To_whom,
+		Status:     user.Verify,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * time.Duration(72)).Unix(),
 		},
@@ -204,7 +202,7 @@ func (uc *signupUsecase) VerifyUser(c context.Context, userID string) error {
 	}
 
 	// Send approval email
-	if err := SendApprovalEmail(user.Email, user.First_Name); err != nil {
+	if err := SendApprovalEmail(user.Email, user.Full_Name); err != nil {
 		return errors.New("failed to send approval email")
 	}
 

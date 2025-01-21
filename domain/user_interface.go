@@ -15,28 +15,28 @@ type JwtCustomClaims struct {
 	Username   string             `json:"username"`
 	Role       string             `json:"role"`
 	To_whom    string             `json:"to_whom"`
+	Status     bool               `json:"status"`
 	jwt.StandardClaims
 }
-type CreateUser struct {
-	Username string `json:"username" binding:"required"`
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Role     string `json:"role" binding:"required"`
-}
+
+// type CreateUser struct {
+// 	Username string `json:"username" binding:"required"`
+// 	Email    string `json:"email" binding:"required"`
+// 	Password string `json:"password" binding:"required"`
+// 	Role     string `json:"role" binding:"required"`
+// }
 
 // Role is a type for user roles
 
 type AuthSignup struct {
 	UserID          primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
-	Username        string             `json:"username" binding:"required"`
 	Email           string             `json:"email" binding:"required"`
 	Password        string             `json:"password"`
 	Role            string             `json:"role"`
 	To_whom         string             `json:"to_whom"`
 	Verify          bool               `json:"verify"`
 	Profile_Picture string             `json:"profile_picture"`
-	First_Name      string             `json:"first_name"`
-	Last_Name       string             `json:"last_name"`
+	Full_Name       string             `json:"full_name"`
 }
 
 type AuthLogin struct {
