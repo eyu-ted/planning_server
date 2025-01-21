@@ -303,7 +303,7 @@ func (rr *planRepository) SubmitReport(ctx context.Context, report *domain.Repor
 func (rr *planRepository) GetFilteredReports(ctx context.Context, userID primitive.ObjectID, status string) ([]domain.Report, error) {
 	filter := bson.M{
 		"report_user_id": userID,
-		"report_status":  status,
+		"status":         status,
 		"type":           "report",
 	}
 
@@ -350,7 +350,6 @@ func (r *planRepository) CountItems(ctx context.Context, itemType string, toWhom
 		"supervisor_name": toWhom,
 		"status":          "Pending",
 	}
-
 
 	// Count the documents that match the filter
 	count, err := collection.CountDocuments(ctx, filter)

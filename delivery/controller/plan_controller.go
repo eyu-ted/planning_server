@@ -383,7 +383,7 @@ func (rc *PlanController) GetFilteredReports(c *gin.Context) {
 	status := c.Query("status")
 
 	// Validate status parameter
-	if status != "pending" && status != "approved" && status != "rejected" {
+	if status != "Pending" && status != "Approved" && status != "Rejected" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid status query parameter"})
 		return
 	}
