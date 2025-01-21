@@ -55,8 +55,10 @@ type Report struct {
 	Type              string             `bson:"type" json:"type"`                     // Owner of the plan (name of the person responsible)
 
 	SupervisorName  string `bson:"supervisor_name" json:"supervisor_name"` // Supervisor's name (1 level higher in hierarchy)
-	Comment         string `bson:"comment" json:"comment"`                 // ID of the user who created the plan
+	Comment         string `bson:"comment" json:"comment"`      
+	         // ID of the user who created the plan
 // Supervisor's name (1 level higher in hierarchy)
+	Value float64 `bson:"value" json:"value"`
 }
 
 // Comment represents a comment on a plan.
