@@ -87,6 +87,8 @@ type PlanRepository interface {
 	CreateAnnouncement(ctx context.Context, announcement *Announcement) error
 	GetAllAnnouncements(ctx context.Context) ([]Announcement, error)
 	Delete(ctx context.Context, id primitive.ObjectID) error
+	FindByOwnerID(ctx context.Context, ownerID primitive.ObjectID, datatype string) ([]Plan, error)
+	FindByUserID(ctx context.Context, userID primitive.ObjectID, datatype string) ([]Report, error)
 }
 type PlanUsecase interface {
 	CreatePlan(c context.Context, plan *Plan) (*primitive.ObjectID, error)
@@ -113,4 +115,6 @@ type PlanUsecase interface {
 	PublishAnnouncement(ctx context.Context, announcement *Announcement) error
 	GetAllAnnouncements(ctx context.Context) ([]Announcement, error)
 	DeleteAnnouncement(ctx context.Context, id primitive.ObjectID) error
+	GetPlansByOwnerID(ctx context.Context, ownerID primitive.ObjectID, datatype string) ([]Plan, error)
+	GetReportsByUserID(ctx context.Context, userID primitive.ObjectID, datatype string) ([]Report, error)
 }

@@ -27,6 +27,30 @@ func NewPlanRepository(db database.Database, collection string) domain.PlanRepos
 		collection: collection,
 	}
 }
+
+func (repo *planRepository) FindByOwnerID(ctx context.Context, ownerID primitive.ObjectID, datatype string) ([]domain.Plan, error) {
+	var plans []domain.Plan
+	cursor, err := repo.database.Collection(repo.collection).Find(ctx, bson.M{"owner_id": ownerID}, options.Find())
+	if err != nil {
+		return nil, err
+	}
+	if err = cursor.All(ctx, &plans); err != nil {
+		return nil, err
+	}
+	return plans, nil
+}
+
+func (repo *planRepository) FindByUserID(ctx context.Context, userID primitive.ObjectID, datatype string) ([]domain.Report, error) {
+	var reports []domain.Report
+	cursor, err := repo.database.Collection(repo.collection).Find(ctx, bson.M{"report_user_id": userID}, options.Find())
+	if err != nil {
+		return nil, err
+	}
+	if err = cursor.All(ctx, &reports); err != nil {
+		return nil, err
+	}
+	return reports, nil
+}
 func (repo *planRepository) Delete(ctx context.Context, id primitive.ObjectID) error {
 	collection := repo.database.Collection(repo.collection)
 

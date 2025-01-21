@@ -17,6 +17,47 @@ type PlanController struct {
 	PlanUsecase domain.PlanUsecase
 	Env         *config.Env
 }
+func (pc *PlanController) GetUserPlansAndReports(c *gin.Context) {
+	// Bind JSON body to retrieve user ID
+	var requestBody struct {
+		UserID string `json:"user_id" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID is required"})
+		return
+	}
+
+	// Validate ObjectID
+	userID, err := primitive.ObjectIDFromHex(requestBody.UserID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User ID format"})
+		return
+	}
+
+	// Get type parameter from query
+	dataType := c.Query("type")
+	if dataType != "plan" && dataType != "report" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid type parameter. Must be 'plan' or 'report'"})
+		return
+	}
+
+	// Fetch data based on type
+	if dataType == "plan" {
+		plans, err := pc.PlanUsecase.GetPlansByOwnerID(c, userID,dataType)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": plans})
+	} else if dataType == "report" {
+		reports, err := pc.PlanUsecase.GetReportsByUserID(c, userID, dataType)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": reports})
+	}
+}
 
 func (ac *PlanController) DeleteAnnouncement(c *gin.Context) {
 	id := c.Param("id")

@@ -28,6 +28,17 @@ func NewPlanUsecase(planRepositoryPAR domain.PlanRepository, timeout time.Durati
 		contextTimeout: timeout,
 	}
 }
+func (uc *planUsecaseStruct) GetPlansByOwnerID(ctx context.Context, ownerID primitive.ObjectID,datatype string) ([]domain.Plan, error) {
+	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
+	defer cancel()
+	return uc.planRepository.FindByOwnerID(ctx, ownerID,datatype)
+}
+
+func (uc *planUsecaseStruct) GetReportsByUserID(ctx context.Context, userID primitive.ObjectID,datatype string) ([]domain.Report, error) {
+	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
+	defer cancel()
+	return uc.planRepository.FindByUserID(ctx, userID,datatype)
+}
 func (uc *planUsecaseStruct) DeleteAnnouncement(ctx context.Context, id primitive.ObjectID) error {
 	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
 	defer cancel()
@@ -174,7 +185,6 @@ func (pu *planUsecaseStruct) GetAllPlansByUser(ctx context.Context, userID primi
 	return pu.planRepository.GetAllPlansByUser(c, userID)
 }
 
-
 func (uc *planUsecaseStruct) CountItems(ctx context.Context, itemType string, toWhom string) (int, error) {
 	if itemType != "plan" && itemType != "report" {
 		return 0, fmt.Errorf("invalid item type")
@@ -297,5 +307,3 @@ func (cu *planUsecaseStruct) GetCommentsByPlanID(ctx context.Context, planID pri
 	// Fetch comments from the repository
 	return cu.planRepository.FetchCommentsByPlanID(ctx, planID)
 }
-
-
