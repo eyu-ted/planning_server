@@ -36,6 +36,12 @@ func NewSignupUsecase(userRepository domain.UserRepository, timeout time.Duratio
 		contextTimeout: timeout,
 	}
 }
+func (uu *signupUsecase) FetchUserByID(c context.Context, userID primitive.ObjectID) (*domain.User, error) {
+	ctx, cancel := context.WithTimeout(c, uu.contextTimeout)
+	defer cancel()
+
+	return uu.userRepository.GetUserByID(ctx, userID)
+}
 
 func (su *signupUsecase) RegisterUser(c context.Context, user *domain.AuthSignup) (*primitive.ObjectID, error) {
 	ctx, cancel := context.WithTimeout(c, su.contextTimeout)

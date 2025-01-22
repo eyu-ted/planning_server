@@ -45,6 +45,7 @@ type UserRepository interface {
 	FetchByToWhom(ctx context.Context, firstName string) ([]User, error)
 	DeleteUser(ctx context.Context, userID primitive.ObjectID) error
 	GetUserByID(ctx context.Context, userID primitive.ObjectID) (*User, error)
+	
 }
 
 // Role is a type for user roles
@@ -57,6 +58,7 @@ type SignupUsecase interface {
 	VerifyUser(c context.Context, userID string) error
 	GetUsersByToWhomWithCount(ctx context.Context, firstName string) ([]User, int, error)
 	RejectUser(c context.Context, userID string) error
+	FetchUserByID(c context.Context, userID primitive.ObjectID) (*User, error)
 }
 
 type PlanRepository interface {

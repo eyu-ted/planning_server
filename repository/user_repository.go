@@ -27,6 +27,7 @@ func NewUserRepository(db database.Database, collection string) domain.UserRepos
 	}
 }
 
+
 func (u *userRepository) CreateUser(c context.Context, user *domain.User) error {
 	user.Created_At = primitive.NewDateTimeFromTime(time.Now())
 	collection := u.database.Collection(u.collection)

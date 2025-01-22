@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/gomail.v2"
 )
 
@@ -23,6 +24,31 @@ type SignupController struct {
 // func (sc *SignupController) TokenInfo(c *gin.Contex){
 
 // }
+
+func (uc *SignupController) GetUserInfo(c *gin.Context) {
+	var request struct {
+		UserID string `json:"user_id" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	objectID, err := primitive.ObjectIDFromHex(request.UserID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user_id format"})
+		return
+	}
+
+	user, err := uc.SignupUsecase.FetchUserByID(c, objectID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user": user})
+}
 func (sc *SignupController) Signup(c *gin.Context) {
 	var user domain.AuthSignup
 
