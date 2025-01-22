@@ -29,7 +29,7 @@ func NewProtectedRouter(env *config.Env, timeout time.Duration, db database.Data
 	group.DELETE("/reject", sc.RejectUser)
 	group.GET("/users/subordinates", sc.GetSubordinateUsers)
 
-	group.GET("/users", sc.GetUserInfo)
+	group.POST("/users", sc.GetUserInfo)
 
 
 
